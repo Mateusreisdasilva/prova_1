@@ -1,0 +1,395 @@
+---
+title: "avaliacao_1"
+author: "Mateus Reida da Silva"
+data: "08/05/2021"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+**Questão 01**</br> O datasset abaixo é referente a os dados dos peixes do rio madeira, que irá auxiliar nas resoluções das demais questões a seguir.
+
+```{r}
+dados_prm <- read_csv("dados/brutos/peixes_rio_madeira.csv")
+
+dados_prm %>% view()
+```
+
+
+**(a)** </br> Inicialmente é pedido na questão para que seja realizado a frequência da variavel _ordem_, dessa forma o procedimento está disposto abaixo, foi preciso realizar outro procedimrnto que criou-se também uma variavel _n_ que representa a frequência.
+
+```{r}
+dados_prm %>% 
+  group_by(ordem) %>% 
+  summarise(n = n()) %>% 
+  arrange(n)
+```
+
+Depois de realizar os procedimentos acima, os dados foram organizados de maneira crescente em ordem numerica as observações.
+
+
+**(B)**</b> A ordem de peixes que foi mais indentificada foi a Characiformes, a mesma também apresenta o valor de 12 observações.
+
+**(c)**</br> Os não indentificados na variavel ordem são 17, como demonstrado no procedimento realizado abaixo.
+
+Seleção dos tipos de peixe.
+```{r}
+dados_prm %>% 
+  distinct(ordem)
+```
+
+
+```{r}
+dados_prm %>% 
+  filter(ordem == "Não indentificado")
+```
+
+
+Organização de forma crescente.
+```{r}
+dados_prm %>% 
+  group_by(ordem) %>% 
+  summarise(n = n()) %>% 
+  arrange(n)
+```
+
+
+
+**Questão 02**
+
+```{r}
+dados_prm %>% 
+  distinct(bacia)
+```
+
+
+```{r}
+dados_prm %>% 
+  select(ordem, peso_g)
+```
+
+
+```{r}
+dados_prm %>%
+  drop_na() %>% 
+  summarise(
+    media_peso = mean(peso_g)
+  )
+```
+
+calculo da média
+```{r}
+dados_prm %>% 
+  group_by(ordem) %>% 
+  drop_na() %>% 
+  summarise(
+    media_peso = mean(peso_g)
+  )
+```
+
+
+Calculo do desvio padrão
+```{r}
+dados_prm %>% 
+  group_by(ordem) %>% 
+  drop_na() %>% 
+  summarise(
+    dsp_peso = sd(peso_g)
+  )
+```
+
+
+
+**a** </br> A medida de variabilidade mais adequada é a de ceoficiente de variação, depois de realizar os procedimentos dispostos acima
+
+**b** </br> Ordem de peixe Acanthuriformes.
+
+```{r}
+dados_prm %>% 
+  group_by(ordem) %>% 
+  drop_na() %>% 
+  summarise(
+    cv = (sd(peso_g)/mean(peso_g)) * 100
+  )
+```
+
+  
+  
+**Questão 03**
+
+```{r}
+dados_prm %>% 
+  distinct(sexo)
+```
+
+```{r}
+dados_prm %>% 
+  mutate(
+    sexo_recode = recode(
+      sexo,
+      "Fêmea" = "Fêmea",
+      "Macho" = "Macho",
+      "fêmea" = "Fêmea",
+      "Não coletado" = "Não coletado"
+    )
+  ) %>% 
+  group_by(sexo_recode) %>% 
+  summarise(
+    n = n())
+```
+
+
+**a** 
+```{r}
+(28331 - 21469)
+(6862/28331) * 100
+```
+
+
+**b** </br> Nesse procedimento foi possivel calcular o sexo dos peixes que tem maior peso, e verificou-se que foi a Fêmea.
+
+```{r}
+dados_prm %>% 
+  mutate(
+    sexo_recode = recode(
+      sexo,
+  "Fêmea" =  "Fêmea",
+  "Macho"	=	"Macho",
+  "fêmea" = "Fêmea",
+  "Não coletado" = "Não coletado"
+    )
+  ) %>% 
+  select(peso_g, sexo_recode) %>% 
+  group_by(sexo_recode) %>% 
+  drop_na() %>% 
+  summarise(
+    n = sum(peso_g)
+  )
+
+```
+
+
+
+
+**Questão 04** </br> De acordo com os procedimentos realizados, com base nos calculos foi perceptivel notar que teve 8552 peixes machos.
+
+```{r}
+dados_prm %>% 
+  distinct(habito_alimentar)
+```
+
+
+```{r}
+dados_prm %>% 
+  mutate(
+    sexo_recode = recode(
+      sexo,
+  "Fêmea" =  "Fêmea",
+  "Macho"	=	"Macho",
+  "Não coletado" = "Não coletado",
+  "fêmea" = "Fêmea"
+    ) 
+  ) %>% 
+  filter(habito_alimentar == "Carnívoro") %>% 
+  group_by(sexo_recode) %>% 
+  summarise(
+    n = n()
+  )
+```
+
+
+**Questão 05** </br> De acordo com os calculos realizados a seguir analisou-se que o maior rendimento líquido é de 7267672
+
+```{r}
+dados_ch <- read_csv("dados/brutos/contracheque(1).csv")
+
+dados_ch %>% view()
+```
+
+```{r}
+dados_ch %>% 
+  group_by(rendimento_liquido) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(rendimento_liquido))
+```
+
+
+**Questão 06**</br> De acordo com os procedimentos realizados a seguir 37334 magstrados recebem o valor acima de 39293.32.
+
+
+```{r}
+dados_ch %>% 
+  distinct(cargo) %>% view()
+```
+
+```{r}
+dados_ch %>% 
+  filter(rendimento_liquido > 39293.32) %>% 
+  count()
+```
+
+
+**a** </br> De acordo com os procedimentos realizados abaixo a quantidade de 1136 magistrados receberam acima do valor de 100000
+
+```{r}
+dados_ch %>% 
+  filter(rendimento_liquido > 100000) %>% 
+  count()
+```
+
+**b**</br> Diates dos procedimentos realizados abaixo o tribunal regional do trabalho de setima região (CE) é o que possui um maior valor de variabilidade.
+
+```{r}
+dados_ch %>% 
+  distinct(tribunal)
+```
+
+```{r}
+dados_ch %>%
+  drop_na() %>%
+  summarise(
+    media_rendimento = mean(rendimento_liquido)
+  )
+```
+
+```{r}
+dados_ch %>% 
+  group_by(tribunal) %>% 
+  select(rendimento_liquido) %>% 
+  drop_na() %>% 
+  summarise(
+    media_rendimento = mean(rendimento_liquido)
+  )
+```
+
+
+```{r}
+dados_ch %>% 
+  group_by(tribunal) %>% 
+  select(rendimento_liquido) %>% 
+  drop_na() %>% 
+  summarise(
+    dp_rendimento = sd(rendimento_liquido), dp_rendimento = n()) %>% arrange(desc(dp_rendimento))
+```
+
+variabilidade do tribunal
+```{r}
+dados_ch %>% 
+  group_by(tribunal) %>% 
+  select(rendimento_liquido) %>% 
+  drop_na() %>% 
+  summarise(
+    cv = (sd(rendimento_liquido)/mean(rendimento_liquido)) * 100) 
+```
+
+
+arranjo em ordem decrescente
+```{r}
+dados_ch %>% 
+  group_by(tribunal) %>% 
+  select(rendimento_liquido) %>% 
+  drop_na() %>% 
+  summarise(
+    cv_rendimento = (sd(rendimento_liquido)/mean(rendimento_liquido)) * 100) %>% 
+arrange(desc(cv_rendimento))
+```
+
+
+**Questão 07**
+
+
+```{r}
+dados_cp <- read_csv("dados/brutos/cursos-prouni.csv")
+
+dados_cp %>% view()
+```
+
+**a**</b> Curso integral.
+
+**b** </br> Calculo da media e mediana.
+```{r}
+dados_cp %>% 
+  group_by(turno) %>% 
+  select(nota_integral_ampla) %>%
+  drop_na() %>% 
+  summarise(
+    media_intgegral = mean(nota_integral_ampla)
+  )
+```
+
+
+```{r}
+dados_cp %>% 
+  group_by(turno) %>% 
+  select(nota_integral_ampla) %>%
+  drop_na() %>% 
+  summarise(
+    mediana_intgegral = median(nota_integral_ampla))
+```
+
+**c** </br> Calculo do turno que possui a menor homogenidade.
+
+
+```{r}
+dados_cp %>% 
+  group_by(turno) %>% 
+  select(nota_integral_ampla) %>% 
+  drop_na() %>% 
+  summarise(
+    dsp_integral = sd(nota_integral_ampla))
+```
+
+
+```{r}
+dados_cp %>% 
+  group_by(turno) %>% 
+  select(nota_integral_ampla) %>% 
+  drop_na() %>% 
+  summarise(
+    cv = (sd(nota_integral_ampla)/mean(nota_integral_ampla)) * 100
+  )
+```
+
+
+Depois de realzar os procedimentos dispostos acima, foi possível chegar a conclusão de que o turno com menor homogênidade é o vespertino.
+
+
+**Questão 08**
+
+De acordo com analíse dos dados, foi possível indentificar que o estado da Bahia está ocupando a quinta posicão.
+
+```{r}
+dados_cp <- read_csv("dados/brutos/cursos-prouni.csv")
+```
+
+```{r}
+dados_cp %>% 
+  group_by(uf_busca) %>%
+  summarise(
+    y = n()
+  ) %>% 
+  arrange(desc(y))
+```
+
+
+```{r}
+dados_cp %>% 
+  distinct(uf_busca)
+```
+
+
+**Questão 09**</br> Nessa questão utilizou-se os dados do curso proune e foi realizado o procedimento abaixo para poder selecionar os cursos que não tem repetições, dessa forma intificou-se a quantidade de 296 cursos distintos.
+
+
+```{r}
+dados_cp %>%
+  distinct(nome) %>% view()
+```
+
+
+**Questão 10** </br> De acordo com a analise dos grafícos que representam os cursos de Direito e Medicina, foi perceptivel a conclusão de que ambos grafícos são uma curtose, o grafíco correspondente ao curso de Direito é chamado de palsticúrtica, isso quer dizer que os dados numericos desse grafíco estão destribuidos de forma dispersas, o que pode-se levar a entender também que o desvio padrão é consideravelmente alto.
+No grafíco que representa o curso de medicina podemos observar que a representação dele tem um pico elevado, essa representação demonstra a simetria entre as partes graficas, se tracejarmos uma linha dividindo ao meio o grafíco as partes será simetricas, o que induz afirmar que os valores da média, moda e mediana são parecidos. 
