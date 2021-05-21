@@ -11,6 +11,7 @@ library(tidyverse)
 ```
 
 
+
 **Questão 01**</br> O datasset abaixo é referente a os dados dos peixes do rio madeira, que irá auxiliar nas resoluções das demais questões a seguir.
 
 ```{r}
